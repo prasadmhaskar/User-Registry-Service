@@ -1,6 +1,7 @@
 package com.pnm.service;
 
 import com.pnm.entity.User;
+import com.pnm.exception.ResourceNotFoundException;
 import com.pnm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,11 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     public User updateUser(Long id, User user) {
+
         User existing = getUserById(id);
 
         existing.setName(user.getName());
@@ -38,10 +40,8 @@ public class UserService {
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("Cannot delete. User not found with id: " + id);
         }
         userRepository.deleteById(id);
     }
-
-
 }

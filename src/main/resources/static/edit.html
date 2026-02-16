@@ -37,33 +37,45 @@
 
 <script>
     let currentId = 0;
+    const resultDiv = document.getElementById("result");
+    const editSection = document.getElementById("editSection");
 
     document.getElementById("searchForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-
         currentId = document.getElementById("searchId").value;
 
-        const u = await getEntryById(currentId);
+        try {
+            // Reset UI
+            resultDiv.innerHTML = "";
+            editSection.style.display = "none";
 
-        document.getElementById("editSection").style.display = "block";
+            const u = await getEntryById(currentId);
 
-        document.getElementById("editName").value = u.name;
-        document.getElementById("editPercentage").value = u.percentage;
-        document.getElementById("editMarried").checked = u.isMarried;
+            // Populate form
+            editSection.style.display = "block";
+            document.getElementById("editName").value = u.name;
+            document.getElementById("editPercentage").value = u.percentage;
+            document.getElementById("editMarried").checked = u.married; // Fixed: using u.married matching API
+
+        } catch (error) {
+            resultDiv.innerHTML = `<div class='alert alert-danger'>${error.message}</div>`;
+        }
     });
 
     document.getElementById("updateBtn").addEventListener("click", async () => {
+        try {
+            const updatedUser = {
+                name: document.getElementById("editName").value,
+                percentage: parseFloat(document.getElementById("editPercentage").value),
+                married: document.getElementById("editMarried").checked // Fixed: property name
+            };
 
-        const updatedUser = {
-            name: document.getElementById("editName").value,
-            percentage: parseFloat(document.getElementById("editPercentage").value),
-            isMarried: document.getElementById("editMarried").checked
-        };
+            await updateEntry(currentId, updatedUser);
+            resultDiv.innerHTML = `<div class='alert alert-success'>Updated Successfully</div>`;
 
-        await updateEntry(currentId, updatedUser);
-
-        document.getElementById("result").innerHTML =
-            `<div class='alert alert-success'>Updated Successfully</div>`;
+        } catch (error) {
+            resultDiv.innerHTML = `<div class='alert alert-danger'>${error.message}</div>`;
+        }
     });
 </script>
 

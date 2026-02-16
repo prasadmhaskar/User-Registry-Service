@@ -24,17 +24,26 @@
 <script>
     document.getElementById("idForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-
         const id = document.getElementById("id").value;
-        const u = await getEntryById(id);
+        const resultDiv = document.getElementById("result");
 
-        document.getElementById("result").innerHTML =
-            `<div class='card p-3'>
-                <p><b>ID:</b> ${u.id}</p>
-                <p><b>Name:</b> ${u.name}</p>
-                <p><b>Percentage:</b> ${u.percentage}</p>
-                <p><b>Married:</b> ${u.married}</p>
-            </div>`;
+        try {
+            // Clear previous results
+            resultDiv.innerHTML = "Loading...";
+
+            const u = await getEntryById(id);
+
+            resultDiv.innerHTML =
+                `<div class='card p-3 border-success'>
+                    <p><b>ID:</b> ${u.id}</p>
+                    <p><b>Name:</b> ${u.name}</p>
+                    <p><b>Percentage:</b> ${u.percentage}</p>
+                    <p><b>Married:</b> ${u.married ? "Yes" : "No"}</p>
+                </div>`;
+        } catch (error) {
+            // SHOW THE ERROR IN RED
+            resultDiv.innerHTML = `<div class='alert alert-danger'>${error.message}</div>`;
+        }
     });
 </script>
 

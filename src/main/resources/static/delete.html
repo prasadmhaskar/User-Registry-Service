@@ -24,13 +24,15 @@
 <script>
     document.getElementById("deleteForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-
         const id = document.getElementById("deleteId").value;
+        const resultDiv = document.getElementById("result");
 
-        await deleteEntry(id);
-
-        document.getElementById("result").innerHTML =
-            `<div class='alert alert-success'>Deleted Successfully</div>`;
+        try {
+            await deleteEntry(id);
+            resultDiv.innerHTML = `<div class='alert alert-success'>Deleted ID ${id} Successfully</div>`;
+        } catch (error) {
+            resultDiv.innerHTML = `<div class='alert alert-danger'>${error.message}</div>`;
+        }
     });
 </script>
 
